@@ -29,6 +29,12 @@ namespace linsys {
     struct LinearSystemSolution {
         boost::rational<int> x, y;
     };
+
+    struct LinearSystem {
+        LinearEquation firstEquation, secondEquation;
+        std::experimental::optional<LinearSystemSolution> solution;
+        bool solutionAttempted;
+    };
 }
 
 BOOST_FUSION_ADAPT_TPL_ADT(
@@ -67,9 +73,11 @@ namespace linsys {
             using qi::attr;
             using qi::eoi;
 
+            fraction = int_
+                    >> ('/' >> int_ | attr(1));
+
             atom = '('
-                    >> int_
-                    >> ('/' >> int_ | attr(1))
+                    >> fraction
                     >> ')'
                     ;
 
@@ -81,11 +89,12 @@ namespace linsys {
                     >> (char_('+') | char_('-'))
                     >> term
                     >> "="
-                    >> atom
+                    >> fraction
                     >> eoi
                     ;
         }
 
+        qi::rule<Iterator, boost::rational<int>()> fraction;
         qi::rule<Iterator, boost::rational<int>()> atom;
         qi::rule<Iterator, linsys::Term()> term;
         qi::rule<Iterator, linsys::LinearEquation(), ascii::space_type> equation;
@@ -113,14 +122,21 @@ static void normalizeLinearEquation(linsys::LinearEquation& equation) {
 }
 
 const static bool validateAndNormalizeLinearEquations(linsys::LinearEquation& firstEquation, linsys::LinearEquation& secondEquation) {
-    normalizeLinearEquation(firstEquation);
-    normalizeLinearEquation(secondEquation);
-
-    if (firstEquation.firstTerm.variableName != secondEquation.firstTerm.variableName) return false;
+    if (firstEquation.firstTerm.variableName != secondEquation.firstTerm.variableName) {
+        if (firstEquation.secondTerm.variableName == secondEquation.firstTerm.variableName) {
+            std::swap(secondEquation.firstTerm, secondEquation.secondTerm);
+        } else {
+            return false;
+        }
+    }
     else if (firstEquation.secondTerm.variableName != secondEquation.secondTerm.variableName) return false;
     else if (firstEquation.firstTerm.coefficient.numerator() == 0 && firstEquation.secondTerm.coefficient.numerator() == 0) return 0;
     else if (secondEquation.firstTerm.coefficient.numerator() == 0 && secondEquation.secondTerm.coefficient.numerator() == 0) return 0;
-    else return 1;
+
+    normalizeLinearEquation(firstEquation);
+    normalizeLinearEquation(secondEquation);
+
+    return 1;
 }
 
 template <typename Iterator, typename Parser>
@@ -130,6 +146,13 @@ const static bool parseLinearEquationReturningResult(linsys::LinearEquation& equ
     const bool parseStatus = qi::phrase_parse(begin, end, parser, ascii::space, equation);
 
     return parseStatus;
+}
+
+static void skipUntilNextLinearEquation(std::istream& inputStream) {
+    std::string line;
+    for (; std::getline(inputStream, line);) {
+        if (line.size() == 0 || line.at(0) == 13) break;
+    }
 }
 
 int main() {
@@ -143,35 +166,40 @@ int main() {
     while (input) {
         std::string firstEquationText;
         if (!std::getline(input, firstEquationText)) {
-            std::cout << "Encountered end of stream! Exiting." << std::endl;
-            break;
+            std::cout << "Encountered end of stream! Skipping." << std::endl;
+            skipUntilNextLinearEquation(input);
+            continue;
         }
 
         std::string secondEquationText;
         if (!std::getline(input, secondEquationText)) {
-            std::cout << "Encountered end of stream! Exiting." << std::endl;
-            break;
+            std::cout << "Encountered end of stream! Skipping." << std::endl;
+            skipUntilNextLinearEquation(input);
+            continue;
         }
 
         linsys::LinearEquation firstEquation;
         const bool firstEqStatus = parseLinearEquationReturningResult(firstEquation, parser, std::cbegin(firstEquationText), std::cend(firstEquationText));
 
         if (!firstEqStatus) {
-            std::cout << "Extraneous input found while parsing linear equation! Exiting." << std::endl;
-            break;
+            std::cout << "Extraneous input found while parsing linear equation! Skipping." << std::endl;
+            skipUntilNextLinearEquation(input);
+            continue;
         }
 
         linsys::LinearEquation secondEquation;
         const bool secondEqStatus = parseLinearEquationReturningResult(secondEquation, parser, std::cbegin(secondEquationText), std::cend(secondEquationText));
 
         if (!secondEqStatus) {
-            std::cout << "Failed to extraneous input found while parsing linear equation! Exiting." << std::endl;
-            break;
+            std::cout << "Extraneous input found while parsing linear equation! Skipping." << std::endl;
+            skipUntilNextLinearEquation(input);
+            continue;
         }
 
         if (!validateAndNormalizeLinearEquations(firstEquation, secondEquation)) {
-            std::cout << "Found malformed linear equation! Exiting." << std::endl;
-            break;
+            std::cout << "Found malformed linear equation! Skipping." << std::endl;
+            skipUntilNextLinearEquation(input);
+            continue;
         }
 
         if (auto solution = findSolution(firstEquation, secondEquation)) {
@@ -179,13 +207,12 @@ int main() {
                       << firstEquation.firstTerm.variableName << " = " << solution->x << ", "
                       << firstEquation.secondTerm.variableName << " = " << solution->y << std::endl;
         } else {
-            std::cout << "No solution found to linear system "
-                    << firstEquationText << ", " << secondEquationText << "." << std::endl;
+            std::cout << "No solution found to linear system." << std::endl;
         }
 
         std::string supposedEmptyText;
         if (!std::getline(input, supposedEmptyText)) {
-            std::cout << "Finished reading linear systems! Exiting." << std::endl;
+            std::cout << "Finished reading linear systems! Skipping." << std::endl;
             break;
         } else if (supposedEmptyText.size() != 0 && supposedEmptyText.at(0) != 13) {
 //            Careful for the carriage return on Windows. This might be 1 not 0 if reading a windows file
