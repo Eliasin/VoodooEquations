@@ -19,6 +19,10 @@ namespace linsys {
         char variableName;
     };
 
+    struct LinearSystemSolution {
+        boost::rational<int> x, y;
+    };
+
     struct LinearEquation {
         Term firstTerm;
         char operation;
@@ -26,14 +30,77 @@ namespace linsys {
         boost::rational<int> answer;
     };
 
-    struct LinearSystemSolution {
-        boost::rational<int> x, y;
+    struct LinearSystem {
+    private:
+        LinearSystem(const LinearEquation firstEquation, const LinearEquation secondEquation, const std::experimental::optional<LinearSystemSolution> solution)
+                : firstEquation(firstEquation), secondEquation(secondEquation), solution(solution) {};
+
+        const static std::experimental::optional<linsys::LinearSystemSolution>
+        findSolution(const linsys::LinearEquation& first, const linsys::LinearEquation& second) {
+            const boost::rational<int> determinant = first.firstTerm.coefficient * second.secondTerm.coefficient - first.secondTerm.coefficient * second.firstTerm.coefficient;
+            if (determinant != 0) {
+                const boost::rational<int> x = (first.answer*second.secondTerm.coefficient - first.secondTerm.coefficient * second.answer) / determinant;
+                const boost::rational<int> y = (first.firstTerm.coefficient * second.answer - first.answer * second.firstTerm.coefficient) / determinant;
+                return {LinearSystemSolution{{x}, {y}}};
+            } else {
+                return {};
+            }
+        }
+
+        static void normalizeLinearEquation(linsys::LinearEquation& equation) {
+            if (equation.operation == '-') {
+                equation.secondTerm.coefficient = -equation.secondTerm.coefficient;
+                equation.operation = '+';
+            }
+        }
+
+        const static bool validateAndNormalizeLinearEquations(linsys::LinearEquation& firstEquation, linsys::LinearEquation& secondEquation) {
+            if (firstEquation.firstTerm.variableName != secondEquation.firstTerm.variableName) {
+                if (firstEquation.secondTerm.variableName == secondEquation.firstTerm.variableName) {
+                    std::swap(secondEquation.firstTerm, secondEquation.secondTerm);
+                } else {
+                    return false;
+                }
+            }
+            else if (firstEquation.secondTerm.variableName != secondEquation.secondTerm.variableName) return false;
+            else if (firstEquation.firstTerm.coefficient.numerator() == 0 && firstEquation.secondTerm.coefficient.numerator() == 0) return 0;
+            else if (secondEquation.firstTerm.coefficient.numerator() == 0 && secondEquation.secondTerm.coefficient.numerator() == 0) return 0;
+
+            normalizeLinearEquation(firstEquation);
+            normalizeLinearEquation(secondEquation);
+
+            return 1;
+        }
+    public:
+        static LinearSystem of(LinearEquation&& firstEquation, LinearEquation&& secondEquation) {
+            if (!validateAndNormalizeLinearEquations(firstEquation, secondEquation)) {
+                throw "Invalid linear equations!";
+            }
+            return {firstEquation, secondEquation, findSolution(firstEquation, secondEquation)};
+        }
+
+        const LinearEquation firstEquation, secondEquation;
+        const std::experimental::optional<LinearSystemSolution> solution;
     };
 
-    struct LinearSystem {
-        LinearEquation firstEquation, secondEquation;
-        std::experimental::optional<LinearSystemSolution> solution;
-        bool solutionAttempted;
+    class SessionEnvironment {
+    public:
+        void addSystem(const LinearSystem&& linearSystem) {
+            linearSystems.emplace_back(linearSystem);
+        }
+
+        unsigned long size() {
+            return linearSystems.size();
+        }
+
+        void forEach(std::function<void (LinearSystem&)> consumer) {
+            for (LinearSystem& sys : linearSystems) {
+                consumer(sys);
+            }
+        }
+
+    private:
+        std::vector<LinearSystem> linearSystems;
     };
 }
 
@@ -101,44 +168,6 @@ namespace linsys {
     };
 }
 
-//Cramer's rule, boys.
-const static std::experimental::optional<linsys::LinearSystemSolution>
-findSolution(const linsys::LinearEquation& first, const linsys::LinearEquation& second) {
-    const boost::rational<int> determinant = first.firstTerm.coefficient * second.secondTerm.coefficient - first.secondTerm.coefficient * second.firstTerm.coefficient;
-    if (determinant != 0) {
-        const boost::rational<int> x = (first.answer*second.secondTerm.coefficient - first.secondTerm.coefficient * second.answer) / determinant;
-        const boost::rational<int> y = (first.firstTerm.coefficient * second.answer - first.answer * second.firstTerm.coefficient) / determinant;
-        return {linsys::LinearSystemSolution{{x}, {y}}};
-    } else {
-        return {};
-    }
-}
-
-static void normalizeLinearEquation(linsys::LinearEquation& equation) {
-    if (equation.operation == '-') {
-        equation.secondTerm.coefficient = -equation.secondTerm.coefficient;
-        equation.operation = '+';
-    }
-}
-
-const static bool validateAndNormalizeLinearEquations(linsys::LinearEquation& firstEquation, linsys::LinearEquation& secondEquation) {
-    if (firstEquation.firstTerm.variableName != secondEquation.firstTerm.variableName) {
-        if (firstEquation.secondTerm.variableName == secondEquation.firstTerm.variableName) {
-            std::swap(secondEquation.firstTerm, secondEquation.secondTerm);
-        } else {
-            return false;
-        }
-    }
-    else if (firstEquation.secondTerm.variableName != secondEquation.secondTerm.variableName) return false;
-    else if (firstEquation.firstTerm.coefficient.numerator() == 0 && firstEquation.secondTerm.coefficient.numerator() == 0) return 0;
-    else if (secondEquation.firstTerm.coefficient.numerator() == 0 && secondEquation.secondTerm.coefficient.numerator() == 0) return 0;
-
-    normalizeLinearEquation(firstEquation);
-    normalizeLinearEquation(secondEquation);
-
-    return 1;
-}
-
 template <typename Iterator, typename Parser>
 const static bool parseLinearEquationReturningResult(linsys::LinearEquation& equation, const Parser& parser, const Iterator&& begin, const Iterator&& end) {
     using namespace boost::spirit;
@@ -155,25 +184,17 @@ static void skipUntilNextLinearEquation(std::istream& inputStream) {
     }
 }
 
-int main() {
-    typedef std::string::const_iterator iter_type;
-    typedef linsys::LinearEquationParser<iter_type> parser_type;
-
-    const parser_type parser;
-
-    std::ifstream input {"input.txt"};
-
+template <typename Parser>
+void readLinearEquationsFromStream(std::istream&& input, linsys::SessionEnvironment& session, const Parser& parser) {
     while (input) {
         std::string firstEquationText;
         if (!std::getline(input, firstEquationText)) {
-            std::cout << "Encountered end of stream! Skipping." << std::endl;
             skipUntilNextLinearEquation(input);
             continue;
         }
 
         std::string secondEquationText;
         if (!std::getline(input, secondEquationText)) {
-            std::cout << "Encountered end of stream! Skipping." << std::endl;
             skipUntilNextLinearEquation(input);
             continue;
         }
@@ -182,7 +203,6 @@ int main() {
         const bool firstEqStatus = parseLinearEquationReturningResult(firstEquation, parser, std::cbegin(firstEquationText), std::cend(firstEquationText));
 
         if (!firstEqStatus) {
-            std::cout << "Extraneous input found while parsing linear equation! Skipping." << std::endl;
             skipUntilNextLinearEquation(input);
             continue;
         }
@@ -191,35 +211,36 @@ int main() {
         const bool secondEqStatus = parseLinearEquationReturningResult(secondEquation, parser, std::cbegin(secondEquationText), std::cend(secondEquationText));
 
         if (!secondEqStatus) {
-            std::cout << "Extraneous input found while parsing linear equation! Skipping." << std::endl;
             skipUntilNextLinearEquation(input);
             continue;
         }
 
-        if (!validateAndNormalizeLinearEquations(firstEquation, secondEquation)) {
-            std::cout << "Found malformed linear equation! Skipping." << std::endl;
-            skipUntilNextLinearEquation(input);
-            continue;
-        }
-
-        if (auto solution = findSolution(firstEquation, secondEquation)) {
-            std::cout << "Found solution to linear system: "
-                      << firstEquation.firstTerm.variableName << " = " << solution->x << ", "
-                      << firstEquation.secondTerm.variableName << " = " << solution->y << std::endl;
-        } else {
-            std::cout << "No solution found to linear system." << std::endl;
-        }
+        try {
+            const linsys::LinearSystem sys = linsys::LinearSystem::of(std::move(firstEquation), std::move(secondEquation));
+            session.addSystem(std::move(sys));
+        } catch (...) {}
 
         std::string supposedEmptyText;
         if (!std::getline(input, supposedEmptyText)) {
-            std::cout << "Finished reading linear systems! Skipping." << std::endl;
             break;
         } else if (supposedEmptyText.size() != 0 && supposedEmptyText.at(0) != 13) {
 //            Careful for the carriage return on Windows. This might be 1 not 0 if reading a windows file
-            std::cout << "Encountered malformed input between linear systems! Exiting." << std::endl;
             break;
         }
     }
+}
+
+int main() {
+    typedef std::string::const_iterator iter_type;
+    typedef linsys::LinearEquationParser<iter_type> parser_type;
+
+    linsys::SessionEnvironment session;
+    const parser_type parser;
+
+    readLinearEquationsFromStream(std::ifstream{"input.txt"}, session, parser);
+    session.forEach([](linsys::LinearSystem& s) {
+        std::cout << s.firstEquation.answer << std::endl;
+    });
 
     return 0;
 }
