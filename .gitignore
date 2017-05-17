@@ -1,4 +1,4 @@
-MakeCache.txt
+CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
@@ -10,3 +10,4 @@ CTestTestfile.cmake
 .idea
 cmake-build-debug/
 include/
+DT3
