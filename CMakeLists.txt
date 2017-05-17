@@ -26,7 +26,7 @@ elseif(LINUX)
 
 endif()
 
-set(SOURCE_FILES src/main.cpp src/linsys/systemparts.h src/linsys/linearsystem.h src/linsys/session.h src/linsys/parser.h src/linsys/linearsystem.cpp src/linsys/session.cpp)
+set(SOURCE_FILES src/main.cpp src/linsys/systemparts.h src/linsys/linearsystem.h src/linsys/session.h src/linsys/parser.h src/linsys/linearsystem.cpp src/linsys/session.cpp src/menu/menu.cpp src/menu/menu.h)
 
 include_directories(include)
 
