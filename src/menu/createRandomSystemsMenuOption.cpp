@@ -1,10 +1,6 @@
 #include "createRandomSystemsMenuOption.hpp"
 
-#include <iostream>
-#include <limits>
 #include <random>
-
-#include "linsys/linearsystem.h"
 
 namespace menu {
 
@@ -39,7 +35,7 @@ namespace menu {
 	}
 
 	void CreateRandomSystemsMenuChoice::select() {
-		size_t n;
+		unsigned int n;
 
 		while (true) {
 			std::cout << "Please enter the amount of random systems to be created: ";
@@ -53,12 +49,7 @@ namespace menu {
 		}
 
 		session.clear();
-		emplaceNRandomLinearSystems(n,
-				[&] (const linsys::LinearSystem& l)->void { session.addSystem(std::move(l)); }
-				);
-
+		emplaceNRandomLinearSystems(n, [&] (const linsys::LinearSystem& l)->void { session.addSystem(std::move(l)); });
 	}
-
-
 
 }

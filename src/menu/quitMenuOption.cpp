@@ -9,4 +9,6 @@ namespace menu {
 		std::exit(0);
 	}
 
+	QuitMenuChoice::QuitMenuChoice() : MenuChoice("Quit") {}
+
 }
