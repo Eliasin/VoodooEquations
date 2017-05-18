@@ -38,6 +38,12 @@ BOOST_FUSION_ADAPT_STRUCT(
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(
+		linsys::LinearSystemSolution,
+		(boost::rational<int>, x)
+		(boost::rational<int>, y)
+		)
+
+BOOST_FUSION_ADAPT_STRUCT(
 		linsys::LinearEquation,
 		(linsys::Term, firstTerm)
 		(char, operation)

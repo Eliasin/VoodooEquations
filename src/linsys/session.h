@@ -12,6 +12,9 @@
 namespace linsys {
 	class SessionEnvironment {
 	public:
+
+		typedef std::vector<LinearSystem>::size_type IndexType;
+
 		void addSystem(const LinearSystem&& linearSystem);
 
 		void clear();
@@ -20,6 +23,8 @@ namespace linsys {
 
 		void forEach(std::function<void (LinearSystem&)> consumer);
 		void forEach(std::function<void (const LinearSystem&)> consumer) const;
+
+		const LinearSystem& at(IndexType i) const;
 
 	private:
 		std::vector<LinearSystem> linearSystems;

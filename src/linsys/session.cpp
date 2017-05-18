@@ -28,4 +28,8 @@ namespace linsys {
 			consumer(sys);
 		}
 	}
+
+	const LinearSystem& SessionEnvironment::at(SessionEnvironment::IndexType i) const {
+		return linearSystems.at(i);
+	}
 }
