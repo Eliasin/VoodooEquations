@@ -77,11 +77,13 @@ int main() {
 
 	linsys::SessionEnvironment session;
 	const parser_type parser;
-
-	readLinearEquationsFromStream(std::ifstream{"input.txt"}, session, parser);
-	session.forEach([](linsys::LinearSystem& s) {
-			std::cout << s.firstEquation.answer << std::endl;
-			});
-
+	try {
+		readLinearEquationsFromStream(std::ifstream{"input.txt"}, session, parser);
+		session.forEach([](linsys::LinearSystem& s) {
+				std::cout << s.firstEquation.answer << std::endl;
+				});
+	} catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
 	return 0;
 }
