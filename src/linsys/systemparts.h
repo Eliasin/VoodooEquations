@@ -1,6 +1,6 @@
 /*
-* Created by Mark on 5/16/2017.
-*/
+ * Created by Mark on 5/16/2017.
+ */
 
 #pragma once
 
@@ -8,33 +8,39 @@
 #include <boost/rational.hpp>
 
 namespace linsys {
-    struct Term {
-        boost::rational<int> coefficient;
-        char variableName;
-    };
+	struct Term {
+		boost::rational<int> coefficient;
+		char variableName;
 
-    struct LinearSystemSolution {
-        boost::rational<int> x, y;
-    };
+		std::string toString() const noexcept;
+	};
 
-    struct LinearEquation {
-        Term firstTerm;
-        char operation;
-        Term secondTerm;
-        boost::rational<int> answer;
-    };
+	struct LinearSystemSolution {
+		boost::rational<int> x, y;
+
+		std::string toString() const noexcept;
+	};
+
+	struct LinearEquation {
+		Term firstTerm;
+		char operation;
+		Term secondTerm;
+		boost::rational<int> answer;
+
+		std::string toString() const noexcept;
+	};
 }
 
 BOOST_FUSION_ADAPT_STRUCT(
-        linsys::Term,
-        (boost::rational<int>, coefficient)
-                (char, variableName)
-)
+		linsys::Term,
+		(boost::rational<int>, coefficient)
+		(char, variableName)
+		)
 
 BOOST_FUSION_ADAPT_STRUCT(
-        linsys::LinearEquation,
-        (linsys::Term, firstTerm)
-                (char, operation)
-                (linsys::Term, secondTerm)
-                (boost::rational<int>, answer)
-)
+		linsys::LinearEquation,
+		(linsys::Term, firstTerm)
+		(char, operation)
+		(linsys::Term, secondTerm)
+		(boost::rational<int>, answer)
+		)
