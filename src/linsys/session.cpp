@@ -22,4 +22,10 @@ namespace linsys {
 			consumer(sys);
 		}
 	}
+
+	void SessionEnvironment::forEach(std::function<void (const LinearSystem&)> consumer) const {
+		for (const LinearSystem& sys : linearSystems) {
+			consumer(sys);
+		}
+	}
 }

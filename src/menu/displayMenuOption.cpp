@@ -5,9 +5,7 @@
 namespace menu {
 
 	void DisplayMenuChoice::select() {
-		for (const linsys::LinearSystem& linearSystem : linearSystems) {
-			std::cout << linearSystem.toString() << std::endl;
-		}
+		session.forEach([&] (const linsys::LinearSystem& system)->void { std::cout << system.toString() << std::endl;  });
 	}
 
 }
