@@ -1,6 +1,6 @@
 /*
-* Created by Mark on 5/17/2017.
-*/
+ * Created by Mark on 5/17/2017.
+ */
 
 #pragma once
 
@@ -8,37 +8,55 @@
 #include <vector>
 #include <functional>
 #include <initializer_list>
+#include <iostream>
 
 namespace menu {
 
-    class MenuChoice {
-    public:
-        explicit MenuChoice(const std::string &&name) : name(name) {}
+	inline void waitForEnterKey() {
+		#if defined(_WIN32)
+		system("PAUSE");
+		#elif defined (__CYGWIN__) || defined(__linux__)
+		system("echo Please press the enter key to continue...");
+		system("read");
+		#endif
+	}
 
-        virtual void select() = 0;
+	inline void clearScreen() {
+		#if defined(_WIN32)
+		system("CLS");
+		#elif defined (__CYGWIN__) || defined(__linux__)
+		system("clear");
+		#endif
+	}
 
-        const std::string &getName() noexcept {
-            return name;
-        }
+	class MenuChoice {
+	public:
+		explicit MenuChoice(const std::string &&name) : name(name) {}
 
-    private:
-        const std::string name;
-    };
+		virtual void select() = 0;
 
-    class Menu {
-    public:
-        typedef std::vector<const MenuChoice*>::size_type IndexType;
+		const std::string &getName() noexcept {
+			return name;
+		}
 
-        Menu(const std::initializer_list<const MenuChoice*>&& menuChoices) : menuChoices(menuChoices) {}
+	private:
+		const std::string name;
+	};
 
-        void forEach(const std::function<void(const IndexType, const MenuChoice&)> &consumer) const noexcept;
+	class Menu {
+	public:
+		typedef std::vector<const MenuChoice*>::size_type IndexType;
 
-        const IndexType size() const noexcept;
+		Menu(const std::initializer_list<const MenuChoice*>&& menuChoices) : menuChoices(menuChoices) {}
 
-        const MenuChoice& at(const IndexType index) const noexcept;
+		void forEach(const std::function<void(const IndexType, const MenuChoice&)> &consumer) const noexcept;
 
-    private:
-        const std::vector<const MenuChoice*> menuChoices;
-    };
+		const IndexType size() const noexcept;
+
+		const MenuChoice& at(const IndexType index) const noexcept;
+
+	private:
+		const std::vector<const MenuChoice*> menuChoices;
+	};
 
 }
