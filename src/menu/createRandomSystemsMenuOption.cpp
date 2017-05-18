@@ -2,10 +2,41 @@
 
 #include <iostream>
 #include <limits>
+#include <random>
 
 #include "linsys/linearsystem.h"
 
 namespace menu {
+
+	const static boost::rational<int> createRandomFraction(std::function<int()> numberGenerator) {
+		const int denominator = numberGenerator();
+		return boost::rational<int>{numberGenerator(), denominator != 0 ? denominator : 1};
+	}
+
+	template <typename RandomNumberGenerator>
+		static linsys::LinearEquation createLinearEquationWithRandomCoefficients(const char firstVarName, const char secondVarName, RandomNumberGenerator& rng) {
+			const auto gen = [&, dist = std::uniform_int_distribution<int>{-100, 100}]() mutable -> int { return dist(rng); };
+			std::uniform_int_distribution<int> operationGen{0, 1};
+			const linsys::Term firstTerm{createRandomFraction(gen), firstVarName};
+			const linsys::Term secondTerm{createRandomFraction(gen), secondVarName};
+			return {firstTerm, (operationGen(rng) ? '+' : '-'), secondTerm, createRandomFraction(gen)};
+		}
+
+	static void emplaceRandomLinearSystem(std::function<void (const linsys::LinearSystem&)> consumer) {
+		std::mt19937 rng{std::random_device()()};
+		std::uniform_int_distribution<char> variableNameGen{'a', 'z'};
+		const char firstVarName = variableNameGen(rng);
+		const char secondVarName = variableNameGen(rng);
+
+		consumer(linsys::LinearSystem::of(createLinearEquationWithRandomCoefficients(firstVarName, secondVarName, rng),
+					createLinearEquationWithRandomCoefficients(firstVarName, secondVarName, rng)));
+	}
+
+	static void emplaceNRandomLinearSystems(const unsigned int count, std::function<void (const linsys::LinearSystem&)> consumer) {
+		for (int i = 0; i < count; i++) {
+			emplaceRandomLinearSystem(consumer);
+		}
+	}
 
 	void CreateRandomSystemsMenuChoice::select() {
 		size_t n;
@@ -20,61 +51,13 @@ namespace menu {
 				break;
 			}
 		}
-		std::vector<linsys::LinearSystem> generatedSystems = generateRandomSystems(n);
 
-		linearSystems.reserve(linearSystems.size() + generatedSystems.size());
-		std::move(std::begin(generatedSystems), std::end(generatedSystems), std::back_inserter(linearSystems));
-		generatedSystems.clear();
+		emplaceNRandomLinearSystems(n,
+				[&] (const linsys::LinearSystem& l)->void { linearSystems.emplace_back(l); }
+				);
+
 	}
 
-	static char generateAlphabeticalChar() {
-		rand() % 2 ? rand() % ('z' - 'a' + 1) + 'a' : rand() % ('Z' - 'A' + 1) + 'A';
-	}
 
-	static int generateBoundedNumber() {
-		return rand() % (CreateRandomSystemsMenuChoice::maxCoefficient - CreateRandomSystemsMenuChoice::minCoefficient + 1) + CreateRandomSystemsMenuChoice::minCoefficient;
-	}
-
-	static boost::rational<int> generateCoefficient() {
-		return { generateBoundedNumber(), generateBoundedNumber() };
-	}
-
-	static linsys::LinearEquation generateEquation() {
-		char variableName1, variableName2;
-
-		return {{}, rand() % 2 ? '+' : '-', {}, generateBoundedNumber()};
-	}
-
-	static char generateOperator() {
-		return rand() % 2 ? '+' : '-';
-	}
-
-	static linsys::LinearSystem generateLinearSystem() {
-		char variableName1, variableName2;
-		variableName1 = generateAlphabeticalChar();
-		variableName2 = variableName1;
-		while (variableName2 == variableName1)
-			variableName2 = generateAlphabeticalChar();
-
-		linsys::LinearEquation equation1{{generateCoefficient(), variableName1}, generateOperator(), {generateCoefficient(), variableName2}, generateBoundedNumber()};
-
-		if (rand() % 2) {
-			char temp = variableName1;
-			variableName1 = variableName2;
-			variableName2 = temp;
-		}
-
-		linsys::LinearEquation equation2{{generateCoefficient(), variableName1}, generateOperator(), {generateCoefficient(), variableName2}, generateBoundedNumber()};
-
-		return linsys::LinearSystem::of(std::move(equation1), std::move(equation2));
-	}
-
-	std::vector<linsys::LinearSystem> CreateRandomSystemsMenuChoice::generateRandomSystems(size_t n) const {
-		std::vector<linsys::LinearSystem> generatedSystems;
-		for (size_t i = 0; i < n; i++) {
-			generatedSystems.push_back(generateLinearSystem());
-		}
-		return generatedSystems;
-	}
 
 }
