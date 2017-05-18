@@ -19,6 +19,7 @@ namespace linsys {
 		unsigned long size();
 
 		void forEach(std::function<void (LinearSystem&)> consumer);
+		void forEach(std::function<void (const LinearSystem&)> consumer) const;
 
 	private:
 		std::vector<LinearSystem> linearSystems;

@@ -53,7 +53,7 @@ namespace menu {
 		}
 
 		emplaceNRandomLinearSystems(n,
-				[&] (const linsys::LinearSystem& l)->void { linearSystems.emplace_back(l); }
+				[&] (const linsys::LinearSystem& l)->void { session.addSystem(std::move(l)); }
 				);
 
 	}
