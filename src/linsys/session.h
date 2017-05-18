@@ -1,6 +1,6 @@
 /*
-* Created by Mark on 5/16/2017.
-*/
+ * Created by Mark on 5/16/2017.
+ */
 
 #pragma once
 
@@ -10,15 +10,17 @@
 #include "linearsystem.h"
 
 namespace linsys {
-    class SessionEnvironment {
-    public:
-        void addSystem(const LinearSystem&& linearSystem);
+	class SessionEnvironment {
+	public:
+		void addSystem(const LinearSystem&& linearSystem);
 
-        unsigned long size();
+		void clear();
 
-        void forEach(std::function<void (LinearSystem&)> consumer);
+		unsigned long size();
 
-    private:
-        std::vector<LinearSystem> linearSystems;
-    };
+		void forEach(std::function<void (LinearSystem&)> consumer);
+
+	private:
+		std::vector<LinearSystem> linearSystems;
+	};
 }
