@@ -15,26 +15,17 @@ if (CYGWIN)
 		"include/boost/*.hpp"
 		)
 
-elseif(LINUX)
-
-	find_package(Boost)
-
-	if (Boost_FOUND)
-		include_directories(${Boost_INCLUDE_DIRS})
-		target_link_libraries(DT3 ${Boost_LIBRARIES})
-	endif()
-
 endif()
 
 set(SOURCE_FILES src/main.cpp src/linsys/systemparts.h src/linsys/systemparts.cpp src/linsys/linearsystem.h src/linsys/session.h src/linsys/parser.h src/linsys/linearsystem.cpp src/linsys/session.cpp src/menu/menu.cpp src/menu/menu.h src/menu/displayMenuOption.cpp src/menu/displayMenuOption.hpp src/menu/createRandomSystemsMenuOption.hpp src/menu/createRandomSystemsMenuOption.cpp src/menu/quitMenuOption.hpp src/menu/quitMenuOption.cpp)
 
-if(LINUX)
+if(CYGWIN)
 
-    include_directories(src)
+	include_directories(include src)
 
-elseif(CYGWIN)
+else()
 
-    include_directories(include src)
+	include_directories(src)
 
 endif()
 
