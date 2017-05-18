@@ -9,9 +9,8 @@ namespace menu {
 
 	class DisplayMenuChoice : public MenuChoice {
 		const std::vector<linsys::LinearSystem>& linearSystems;
-		std::ostream& out;
 	public:
-		DisplayMenuChoice(std::string&& name, const std::vector<linsys::LinearSystem>& linearSystems, std::ostream& out) : MenuChoice(std::move(name)), linearSystems(linearSystems), out(out) {}
+		DisplayMenuChoice(std::string&& name, const std::vector<linsys::LinearSystem>& linearSystems) : MenuChoice(std::move(name)), linearSystems(linearSystems) {}
 		void select() override;
 	};
 
