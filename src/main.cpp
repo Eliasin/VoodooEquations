@@ -9,6 +9,12 @@
 #include "linsys/session.h"
 #include "linsys/parser.h"
 
+#include "menu/menu.h"
+#include "menu/challengeUserMenuOption.hpp"
+#include "menu/createRandomSystemsMenuOption.hpp"
+#include "menu/displayMenuOption.hpp"
+#include "menu/quitMenuOption.hpp"
+
 template <typename Iterator, typename Parser>
 const static bool parseLinearEquationReturningResult(linsys::LinearEquation& equation, const Parser& parser, const Iterator&& begin, const Iterator&& end) {
 	using namespace boost::spirit;
@@ -77,13 +83,18 @@ int main() {
 
 	linsys::SessionEnvironment session;
 	const parser_type parser;
-	try {
-		readLinearEquationsFromStream(std::ifstream{"input.txt"}, session, parser);
-		session.forEach([](linsys::LinearSystem& s) {
-				std::cout << s.firstEquation.answer << std::endl;
-				});
-	} catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-	}
+
+	readLinearEquationsFromStream(std::ifstream{"input.txt"}, session, parser);
+
+	const menu::Menu menu {
+			new menu::DisplayMenuChoice(session),
+			new menu::CreateRandomSystemsMenuChoice(session),
+			new menu::ChallengeUserMenuChoice(session),
+			new menu::QuitMenuChoice()
+	};
+
+	menu.forEach([&](const menu::Menu::IndexType i, const menu::MenuChoice& choice){
+		std::cout << i << ": " << choice.getName() << std::endl;
+	});
 	return 0;
 }

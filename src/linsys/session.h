@@ -19,7 +19,7 @@ namespace linsys {
 
 		void clear();
 
-		unsigned long size();
+		unsigned long size() const noexcept;
 
 		void forEach(std::function<void (LinearSystem&)> consumer);
 		void forEach(std::function<void (const LinearSystem&)> consumer) const;

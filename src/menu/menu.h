@@ -12,7 +12,7 @@
 
 namespace menu {
 
-	inline void waitForEnterKey() {
+	static inline void waitForEnterKey() {
 		#if defined(_WIN32)
 		system("PAUSE");
 		#elif defined (__CYGWIN__) || defined(__linux__)
@@ -21,7 +21,7 @@ namespace menu {
 		#endif
 	}
 
-	inline void clearScreen() {
+    static inline void clearScreen() {
 		#if defined(_WIN32)
 		system("CLS");
 		#elif defined (__CYGWIN__) || defined(__linux__)
@@ -35,7 +35,7 @@ namespace menu {
 
 		virtual void select() = 0;
 
-		const std::string &getName() noexcept {
+		const std::string& getName() const noexcept {
 			return name;
 		}
 
@@ -49,11 +49,11 @@ namespace menu {
 
 		Menu(const std::initializer_list<const MenuChoice*>&& menuChoices) : menuChoices(menuChoices) {}
 
-		void forEach(const std::function<void(const IndexType, const MenuChoice&)> &consumer) const noexcept;
+		void forEach(std::function<void(const IndexType, const MenuChoice&)> consumer) const noexcept;
 
 		const IndexType size() const noexcept;
 
-		const MenuChoice& at(const IndexType index) const noexcept;
+		const MenuChoice& at(IndexType index) const noexcept;
 
 	private:
 		const std::vector<const MenuChoice*> menuChoices;

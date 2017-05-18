@@ -13,7 +13,7 @@ namespace linsys {
 		linearSystems.clear();
 	}
 
-	unsigned long SessionEnvironment::size() {
+	unsigned long SessionEnvironment::size() const noexcept {
 		return linearSystems.size();
 	}
 

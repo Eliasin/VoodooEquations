@@ -6,9 +6,9 @@
 
 namespace menu {
 
-	void Menu::forEach(const std::function<void(const Menu::IndexType, const MenuChoice&)> &consumer) const noexcept {
+	void Menu::forEach(std::function<void(const Menu::IndexType, const MenuChoice&)> consumer) const noexcept {
 		for (Menu::IndexType i = 0; i < menuChoices.size(); i++) {
-			consumer(i, *menuChoices[i]);
+			consumer(i + 1, *menuChoices[i]);
 		}
 	}
 
