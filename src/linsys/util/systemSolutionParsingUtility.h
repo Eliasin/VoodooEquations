@@ -9,7 +9,7 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/rational.hpp>
 
-#include "systemparts.h"
+#include "linsys/systemparts.h"
 
 namespace linsys {
     namespace {

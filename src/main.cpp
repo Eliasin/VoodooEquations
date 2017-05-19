@@ -10,13 +10,13 @@
 #include "linsys/parser.h"
 
 #include "menu/menu.h"
-#include "menu/challengeUserMenuOption.hpp"
-#include "menu/createRandomSystemsMenuOption.hpp"
-#include "menu/displayMenuOption.hpp"
-#include "menu/quitMenuOption.hpp"
-#include "menu/readSystemsFromFile.hpp"
-#include "menu/deferringmenuoption.h"
-#include "menu/getSystemFromUserMenuOption.hpp"
+#include "menu/options/challengeUserMenuOption.hpp"
+#include "menu/options/createRandomSystemsMenuOption.hpp"
+#include "menu/options/displayMenuOption.hpp"
+#include "menu/options/quitMenuOption.hpp"
+#include "menu/options/readSystemsFromFile.hpp"
+#include "menu/options/deferringmenuoption.h"
+#include "menu/options/getSystemFromUserMenuOption.hpp"
 
 int main() {
 	linsys::SessionEnvironment session;

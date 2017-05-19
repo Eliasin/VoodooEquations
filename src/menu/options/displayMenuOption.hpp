@@ -1,6 +1,6 @@
 #pragma once
 
-#include "menu.h"
+#include "menu/menu.h"
 #include "linsys/linearsystem.h"
 #include "linsys/session.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "linearsystem.h"
+#include "linsys/linearsystem.h"
 
 namespace linsys {
 

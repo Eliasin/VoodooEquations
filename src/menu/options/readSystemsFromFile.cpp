@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "linsys/parser.h"
-#include "linsys/systemParsingUtility.hpp"
+#include "linsys/util/systemParsingUtility.hpp"
 
 namespace menu {
 

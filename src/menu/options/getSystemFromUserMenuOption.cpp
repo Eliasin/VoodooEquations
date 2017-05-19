@@ -5,7 +5,7 @@
 #include <limits>
 
 #include "linsys/parser.h"
-#include "linsys/systemParsingUtility.hpp"
+#include "linsys/util/systemParsingUtility.hpp"
 #include "challengeUserMenuOption.hpp"
 
 namespace menu {

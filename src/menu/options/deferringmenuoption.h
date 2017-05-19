@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "menu.h"
+#include "menu/menu.h"
 
 namespace menu {
     class DeferringMenuChoice : public MenuChoice {

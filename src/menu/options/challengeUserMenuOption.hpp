@@ -7,12 +7,12 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/rational.hpp>
 
-#include "menu.h"
+#include "menu/menu.h"
 
 #include "linsys/session.h"
 #include "linsys/parser.h"
 #include "linsys/systemparts.h"
-#include "linsys/systemSolutionParsingUtility.h"
+#include "linsys/util/systemSolutionParsingUtility.h"
 
 namespace menu {
 
