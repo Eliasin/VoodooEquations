@@ -43,7 +43,6 @@ int main() {
 			std::cout << "Illegal input: must be a number between 1 and " << menu.size() << std::endl;
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			menu::waitForEnterKey();
 		} else {
 			if (input >= 1 && input <= menu.size()) {
 				menu.at(input).select();
