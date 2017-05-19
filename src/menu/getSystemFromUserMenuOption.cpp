@@ -2,9 +2,11 @@
 
 #include <iostream>
 #include <sstream>
+#include <limits>
 
 #include "linsys/parser.h"
 #include "linsys/systemParsingUtility.hpp"
+#include "challengeUserMenuOption.hpp"
 
 namespace menu {
 
@@ -15,11 +17,13 @@ namespace menu {
 			std::string input;
 
 			std::cout << "Please enter the first linear equation: ";
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::getline(std::cin, input);
 			systemString += input;
 			systemString += '\n';
 
 			std::cout << "Please enter the second linear equation: ";
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::getline(std::cin, input);
 			systemString += input;
 
@@ -34,8 +38,12 @@ namespace menu {
 				std::cout << "Invalid linear system!" << std::endl;
 				waitForEnterKey();
 				clearScreen();
-			} else {
+			}
+			else {
 				std::cout << "System added!" << std::endl;
+				linsys::LinearSystem system = session.at(session.size() - 1);
+				challengeUserToSolveSystem(system);
+
 				break;
 			}
 		}
