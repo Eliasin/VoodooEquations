@@ -26,7 +26,7 @@ int main() {
 			new menu::CreateRandomSystemsMenuChoice(session),
 			new menu::GetSystemFromUserMenuChoice(session),
 			new menu::ChallengeUserMenuChoice(session),
-			new menu::DeferringMenuChoice("Solve All Systems", [](){std::cout << "All systems solved!" << std::endl; }),
+			new menu::DeferringMenuChoice("Solve All Systems", []{std::cout << "All systems solved!" << std::endl; }),
 			new menu::DisplayMenuChoice(session),
 			new menu::QuitMenuChoice(session)
 	};
@@ -34,8 +34,8 @@ int main() {
 	for (;;) {
 		menu::clearScreen();
 		menu.forEach([&](const menu::Menu::IndexType i, const menu::MenuChoice &choice) {
-				std::cout << i << ": " << choice.getName() << std::endl;
-				});
+			std::cout << i << ": " << choice.getName() << std::endl;
+		});
 
 		std::cout << "Enter an option: ";
 		int input;
