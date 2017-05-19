@@ -9,11 +9,11 @@ namespace linsys {
 	}
 
 	std::string LinearSystemSolution::toString() const noexcept {
-		return "(" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + ")";
+		return "(" + boost::lexical_cast<std::string>(x) + ", " + boost::lexical_cast<std::string>(y) + ")";
 	}
 
 	std::string LinearEquation::toString() const noexcept {
-		return firstTerm.toString() + operation + secondTerm.toString();
+		return firstTerm.toString() + " " + operation + " " + secondTerm.toString() + " = " + boost::lexical_cast<std::string>(answer);
 	}
 
 }

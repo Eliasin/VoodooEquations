@@ -28,7 +28,7 @@ int main() {
 			new menu::ChallengeUserMenuChoice(session),
 			new menu::DeferringMenuChoice("Solve All Systems", [](){std::cout << "All systems solved!" << std::endl; }),
 			new menu::DisplayMenuChoice(session),
-			new menu::QuitMenuChoice()
+			new menu::QuitMenuChoice(session)
 	};
 
 	for (;;) {
