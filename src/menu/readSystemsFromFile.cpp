@@ -69,7 +69,7 @@ namespace menu {
 			}
 		}
 
-	void ReadSystemsFromFileMenuChoice::select() {
+	void ReadSystemsFromFileMenuChoice::select() override {
 		std::ifstream file;
 		while (true) {
 			std::string input;

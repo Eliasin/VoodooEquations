@@ -9,7 +9,7 @@ namespace menu {
 	class ReadSystemsFromFileMenuChoice : public MenuChoice {
 		linsys::SessionEnvironment& session;
 	public:
-		void select();
+		void select() override;
 	}
 
 }
