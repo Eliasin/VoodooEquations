@@ -2,13 +2,18 @@
 
 #include "menu.h"
 
+#include "linsys/session.h"
+
 namespace menu {
 
 	class QuitMenuChoice : public MenuChoice {
 	public:
-		QuitMenuChoice();
+		explicit QuitMenuChoice(linsys::SessionEnvironment& session);
 
 		void select() const override;
+
+    private:
+        linsys::SessionEnvironment& session;
 	};
 
 }
