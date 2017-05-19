@@ -8,19 +8,19 @@
 
 namespace menu {
 
-	void GetSystemFromUserMenuChoice::select() {
+	void GetSystemFromUserMenuChoice::select() const {
 		std::string systemString;
 
 		while (true) {
 			std::string input;
 
-			std::cout << "Please enter the first linear equation: " << std::endl;
-			std::cin >> input;
+			std::cout << "Please enter the first linear equation: ";
+			std::getline(std::cin, input);
 			systemString += input;
 			systemString += '\n';
 
-			std::cout << "Please enter the second linear equation: " << std::endl;
-			std::cin >> input;
+			std::cout << "Please enter the second linear equation: ";
+			std::getline(std::cin, input);
 			systemString += input;
 
 			std::stringstream ss(systemString);
@@ -34,8 +34,7 @@ namespace menu {
 				std::cout << "Invalid linear system!" << std::endl;
 				waitForEnterKey();
 				clearScreen();
-			}
-			else {
+			} else {
 				std::cout << "System added!" << std::endl;
 				break;
 			}

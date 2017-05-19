@@ -10,7 +10,7 @@ namespace menu {
 		linsys::SessionEnvironment& session;
 	public:
 		ReadSystemsFromFileMenuChoice(linsys::SessionEnvironment& session) : MenuChoice("Read Linear Systems From File"), session(session) {}
-		void select() override;
+		void select() const override;
 	};
 
 }

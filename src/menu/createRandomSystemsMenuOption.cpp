@@ -34,11 +34,11 @@ namespace menu {
 		}
 	}
 
-	void CreateRandomSystemsMenuChoice::select() {
+	void CreateRandomSystemsMenuChoice::select() const {
 		unsigned int n;
 
 		while (true) {
-			std::cout << "Please enter the amount of random systems to be created: ";
+			std::cout << "Please enter the number of random systems to be created: ";
 			if (!(std::cin >> n)) {
 				std::cout << "Illegal input! Input must be a number!" << std::endl;
 				std::cin.clear();
@@ -48,7 +48,6 @@ namespace menu {
 			}
 		}
 
-		session.clear();
 		emplaceNRandomLinearSystems(n, [&] (const linsys::LinearSystem& l)->void { session.addSystem(std::move(l)); });
 	}
 

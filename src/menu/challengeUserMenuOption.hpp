@@ -27,7 +27,7 @@ namespace menu {
 			systemSolution = qi::char_('(') >> fraction >> qi::char_(',') >> fraction >> qi::char_(')');
 		}
 
-		void select() override {
+		void select() const override {
 			if (!session.size()) {
 				std::cout << "No systems, please add some." << std::endl;
 				return;
@@ -73,7 +73,7 @@ namespace menu {
 		const linsys::SessionEnvironment& session;
 		boost::spirit::qi::rule<std::string::const_iterator, boost::rational<int>()> fraction;
 		boost::spirit::qi::rule<std::string::const_iterator, linsys::LinearSystemSolution()> systemSolution;
-		std::mt19937 rng;
+		mutable std::mt19937 rng;
 	};
 
 }

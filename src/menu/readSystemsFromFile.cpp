@@ -8,12 +8,12 @@
 
 namespace menu {
 
-	void ReadSystemsFromFileMenuChoice::select() {
+	void ReadSystemsFromFileMenuChoice::select() const {
 		std::ifstream file;
 		while (true) {
 			std::string input;
 
-			std::cout << "Please enter the name of the file: " << std::endl;
+			std::cout << "Please enter the name of the file: ";
 			std::cin >> input;
 			file.open(input);
 
@@ -24,9 +24,10 @@ namespace menu {
 			clearScreen();
 		}
 
+		session.clear();
 		linsys::LinearEquationParser<std::string::const_iterator> linearEquationParser;
 		linsys::readLinearEquationsFromStream(std::move(file), session, linearEquationParser);
-		std::cout << "There are now " << session.size() << " systems." << std::endl;
+		std::cout << "Read " << session.size() << " systems from file." << std::endl;
 	}
 
 }

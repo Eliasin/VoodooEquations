@@ -8,7 +8,7 @@ namespace menu {
 	public:
 		QuitMenuChoice();
 
-		void select() override;
+		void select() const override;
 	};
 
 }

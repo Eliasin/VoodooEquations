@@ -33,7 +33,7 @@ namespace menu {
 	public:
 		explicit MenuChoice(const std::string &&name) : name(name) {}
 
-		virtual void select() = 0;
+		virtual void select() const = 0;
 
 		const std::string& getName() const noexcept {
 			return name;
