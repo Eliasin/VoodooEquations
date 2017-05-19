@@ -5,7 +5,7 @@
 namespace linsys {
 
 	std::string Term::toString() const noexcept {
-		return boost::lexical_cast<std::string>(coefficient) + variableName;
+		return "(" + boost::lexical_cast<std::string>(coefficient) + ")" + variableName;
 	}
 
 	std::string LinearSystemSolution::toString() const noexcept {
