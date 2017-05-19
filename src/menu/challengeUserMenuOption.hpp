@@ -31,7 +31,7 @@ namespace menu {
 
 			const linsys::LinearSystem& system = session.at(randomSystemIndexGenerator(rng));
 
-			std::cout << system.toString() << std::endl;
+			std::cout << system.firstEquation.toString() << "\n" << system.secondEquation.toString() << std::endl;
 
 			std::string input;
 			linsys::LinearSystemSolution equation;
