@@ -5,6 +5,7 @@
 
 #include "linsys/parser.h"
 #include "linsys/systemParsingUtility.hpp"
+#include "challengeUserMenuOption.hpp"
 
 namespace menu {
 
@@ -34,8 +35,12 @@ namespace menu {
 				std::cout << "Invalid linear system!" << std::endl;
 				waitForEnterKey();
 				clearScreen();
-			} else {
+			}
+			else {
 				std::cout << "System added!" << std::endl;
+				linsys::LinearSystem system = session.at(session.size() - 1);
+				challengeUserToSolveSystem(system);
+
 				break;
 			}
 		}
