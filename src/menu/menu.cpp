@@ -17,7 +17,7 @@ namespace menu {
 	}
 
 	const MenuChoice& Menu::at(const Menu::IndexType index) const noexcept {
-		return *menuChoices[index];
+		return *menuChoices[index - 1];
 	}
 
 }

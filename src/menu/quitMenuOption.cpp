@@ -4,7 +4,7 @@
 
 namespace menu {
 
-	void QuitMenuChoice::select() {
+	void QuitMenuChoice::select() const {
 		std::cout << "Goodbye! :3" << std::endl;
 		std::exit(0);
 	}

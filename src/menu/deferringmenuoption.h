@@ -12,7 +12,7 @@ namespace menu {
         explicit DeferringMenuChoice(const std::string&& name, std::function<void ()> runnable)
                 : MenuChoice(std::move(name)), runnable(runnable) {}
 
-        void select() override {
+        void select() const override {
             runnable();
         }
 

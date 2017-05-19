@@ -12,7 +12,7 @@ namespace menu {
 		DisplayMenuChoice(const linsys::SessionEnvironment& session)
 				: MenuChoice("Display Systems"), session(session) {}
 
-		void select() override;
+		void select() const override;
 	};
 
 }

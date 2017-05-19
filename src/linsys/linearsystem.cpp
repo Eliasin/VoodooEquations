@@ -55,6 +55,9 @@ namespace linsys {
 	}
 
 	std::string LinearSystem::toString() const noexcept {
-		return firstEquation.toString() + "\n" + secondEquation.toString() + "\n" + (solution ? solution->toString() : "No solution");
+		return firstEquation.toString()
+			+ "\n" + secondEquation.toString()
+			+ "\nSolution: " + (solution ? solution->toString() : "none")
+			+ "\n";
 	}
 }

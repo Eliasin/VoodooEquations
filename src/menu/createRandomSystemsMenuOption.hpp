@@ -15,7 +15,7 @@ namespace menu {
         explicit CreateRandomSystemsMenuChoice(linsys::SessionEnvironment& session)
                 : MenuChoice("Create Random Systems"), session(session) {}
 
-		void select() override;
+		void select() const override;
 	};
 
 }
